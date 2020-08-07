@@ -14,6 +14,7 @@ CREATE TABLE submissions (
   length        INT NOT NULL,
   result        VARCHAR(255) NOT NULL,
   execution_time  INT,
+  code          TEXT NOT NULL,
   PRIMARY KEY (id)
 );
 CREATE INDEX ON submissions (user_id);

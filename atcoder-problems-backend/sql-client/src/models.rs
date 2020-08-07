@@ -12,6 +12,7 @@ pub struct Submission {
     pub length: i32,
     pub result: String,
     pub execution_time: Option<i32>,
+    pub code: String,
 }
 
 #[derive(Debug, Eq, PartialEq, Serialize)]

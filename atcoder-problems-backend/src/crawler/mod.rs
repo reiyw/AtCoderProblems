@@ -43,6 +43,7 @@ impl AtCoderFetcher for AtCoderClient {
                 length: s.length as i32,
                 result: s.result,
                 execution_time: s.execution_time.map(|t| t as i32),
+                code: s.code,
             })
             .collect()
     }

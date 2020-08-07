@@ -11,7 +11,7 @@ log = "0.4.6"
 simple_logger = "1.2"
 
 # Scraping
-algorithm-problem-client = "0.6"
+algorithm-problem-client = { git = "https://github.com/reiyw/algorithm-problem-client.git" }
 
 chrono = "0.4"
 regex = "1"

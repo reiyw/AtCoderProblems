@@ -103,6 +103,7 @@ table! {
         length -> Int4,
         result -> Varchar,
         execution_time -> Nullable<Int4>,
+        code -> Text,
     }
 }
 
