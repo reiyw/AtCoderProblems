@@ -34,7 +34,7 @@ where
             }
 
             self.db.update_submissions(&submissions)?;
-            thread::sleep(time::Duration::from_millis(500));
+            thread::sleep(time::Duration::from_millis(200));
         }
 
         info!("Finished");
