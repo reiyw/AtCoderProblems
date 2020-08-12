@@ -14,6 +14,14 @@ where
         (self.0)(contest_id, page)
     }
 
+    async fn fetch_submissions_with_page_check(
+        &self,
+        contest_id: &str,
+        page: u32,
+    ) -> (Vec<Submission>, bool) {
+        ((self.0)(contest_id, page), false)
+    }
+
     async fn fetch_contests(&self, _: u32) -> Result<Vec<Contest>> {
         unimplemented!()
     }

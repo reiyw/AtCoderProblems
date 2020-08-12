@@ -20,6 +20,11 @@ use log::info;
 #[async_trait]
 pub trait AtCoderFetcher {
     async fn fetch_submissions(&self, contest_id: &str, page: u32) -> Vec<Submission>;
+    async fn fetch_submissions_with_page_check(
+        &self,
+        contest_id: &str,
+        page: u32,
+    ) -> (Vec<Submission>, bool);
     async fn fetch_contests(&self, page: u32) -> Result<Vec<Contest>>;
     async fn fetch_problems(&self, contest_id: &str)
         -> Result<(Vec<Problem>, Vec<ContestProblem>)>;
@@ -46,6 +51,34 @@ impl AtCoderFetcher for AtCoderClient {
                 code: s.code,
             })
             .collect()
+    }
+
+    async fn fetch_submissions_with_page_check(
+        &self,
+        contest_id: &str,
+        page: u32,
+    ) -> (Vec<Submission>, bool) {
+        let (submissions, is_last_page) =
+            retry_fetch_submissions_with_page_check(self, 5, contest_id, page).await;
+        (
+            submissions
+                .into_iter()
+                .map(|s| Submission {
+                    id: s.id as i64,
+                    epoch_second: s.epoch_second as i64,
+                    problem_id: s.problem_id,
+                    contest_id: s.contest_id,
+                    user_id: s.user_id,
+                    language: s.language,
+                    point: s.point,
+                    length: s.length as i32,
+                    result: s.result,
+                    execution_time: s.execution_time.map(|t| t as i32),
+                    code: s.code,
+                })
+                .collect(),
+            is_last_page,
+        )
     }
 
     async fn fetch_contests(&self, page: u32) -> Result<Vec<Contest>> {
@@ -107,6 +140,33 @@ async fn retry_fetch_submissions(
         }
     }
     Vec::new()
+}
+
+async fn retry_fetch_submissions_with_page_check(
+    client: &AtCoderClient,
+    retry_count: usize,
+    contest_id: &str,
+    page: u32,
+) -> (Vec<AtCoderSubmission>, bool) {
+    for _ in 0..retry_count {
+        match client
+            .fetch_atcoder_submission_list(contest_id, Some(page), false)
+            .await
+        {
+            Ok(response) if response.max_page == page => {
+                return (response.submissions, true);
+            }
+            Ok(response) => {
+                return (response.submissions, false);
+            }
+            Err(e) => {
+                log::error!("Error when fetching {} {}: {:?} ", contest_id, page, e);
+                log::info!("Sleeping 1sec before retry ...");
+                async_std::task::sleep(std::time::Duration::from_secs(1)).await;
+            }
+        }
+    }
+    (Vec::new(), false)
 }
 
 fn convert_problem(p: AtCoderProblem) -> Problem {

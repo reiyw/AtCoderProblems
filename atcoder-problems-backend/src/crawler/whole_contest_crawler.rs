@@ -44,7 +44,10 @@ where
     pub async fn crawl_from_page(&self, start_page: u32) -> Result<()> {
         for page in start_page.. {
             info!("Crawling {} {} ...", self.contest_id, page);
-            let submissions = self.fetcher.fetch_submissions(&self.contest_id, page).await;
+            let (submissions, is_last_page) = self
+                .fetcher
+                .fetch_submissions_with_page_check(&self.contest_id, page)
+                .await;
             if submissions.is_empty() {
                 info!("Empty!");
                 break;
@@ -52,6 +55,11 @@ where
 
             self.db.update_submissions(&submissions)?;
             thread::sleep(time::Duration::from_millis(200));
+
+            if is_last_page {
+                info!("Reached the last page: {}", page);
+                break;
+            }
         }
 
         info!("Finished");
