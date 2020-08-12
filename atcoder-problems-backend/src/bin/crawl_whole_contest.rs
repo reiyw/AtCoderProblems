@@ -13,6 +13,9 @@ async fn main() -> Result<()> {
     let contest_id = env::args().nth(1).expect("contest_id is not set.");
     let db = connect(&url)?;
     let crawler = WholeContestCrawler::new(db, AtCoderClient::default(), contest_id);
-    crawler.crawl().await?;
+    match env::args().nth(2) {
+        Some(page) => crawler.crawl_from_page(page.parse()?).await?,
+        None => crawler.crawl().await?,
+    }
     Ok(())
 }

@@ -81,7 +81,7 @@ dependencies = [
 [[package]]
 name = "algorithm-problem-client"
 version = "0.6.0"
-source = "git+https://github.com/reiyw/algorithm-problem-client.git#def837502c3c24b744120503e668466f4c2aea75"
+source = "git+https://github.com/reiyw/algorithm-problem-client.git#7cf7bfb18ccc4532c3c693f39ed95f97b6b16043"
 dependencies = [
  "async-std",
  "chrono",

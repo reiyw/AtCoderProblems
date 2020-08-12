@@ -93,7 +93,7 @@ async fn retry_fetch_submissions(
 ) -> Vec<AtCoderSubmission> {
     for _ in 0..retry_count {
         match client
-            .fetch_atcoder_submission_list(contest_id, Some(page))
+            .fetch_atcoder_submission_list(contest_id, Some(page), false)
             .await
         {
             Ok(response) => {
