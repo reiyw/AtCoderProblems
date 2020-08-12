@@ -40,6 +40,23 @@ where
         info!("Finished");
         Ok(())
     }
+
+    pub async fn crawl_from_page(&self, start_page: u32) -> Result<()> {
+        for page in start_page.. {
+            info!("Crawling {} {} ...", self.contest_id, page);
+            let submissions = self.fetcher.fetch_submissions(&self.contest_id, page).await;
+            if submissions.is_empty() {
+                info!("Empty!");
+                break;
+            }
+
+            self.db.update_submissions(&submissions)?;
+            thread::sleep(time::Duration::from_millis(200));
+        }
+
+        info!("Finished");
+        Ok(())
+    }
 }
 
 #[cfg(test)]
