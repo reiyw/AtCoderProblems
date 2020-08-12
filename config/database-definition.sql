@@ -19,6 +19,7 @@ CREATE TABLE submissions (
 );
 CREATE INDEX ON submissions (user_id);
 CREATE INDEX ON submissions (epoch_second);
+CREATE INDEX ON submissions (problem_id);
 
 DROP TABLE IF EXISTS problems;
 CREATE TABLE problems (
